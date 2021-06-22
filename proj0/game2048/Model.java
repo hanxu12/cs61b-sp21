@@ -138,6 +138,14 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        int size = b.size();
+        for (int row = 0; row < size; row += 1) {
+            for (int col = 0; col < size; col += 1) {
+                if (b.tile(col, row) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +156,14 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        int size = b.size();
+        for (int row = 0; row < size; row += 1) {
+            for (int col = 0; col < size; col +=1) {
+                if (b.tile(col,row)!=null && b.tile(col, row).value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,9 +175,42 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        //check if at least one empty space on the board.
+        if (emptySpaceExists(b)) {
+            return true;
+        }
+        int size = b.size();
+        for (int row = 0; row < size; row += 1) {
+            for (int col = 0 ; col < size; col += 1) {
+                int currVal = b.tile(col, row).value();
+                if (validTile(b, col - 1, row) && currVal == b.tile(col-1, row).value()) {
+                    return true;
+                }
+                if (validTile(b, col + 1, row) && currVal == b.tile(col+1, row).value()) {
+                    return true;
+                }
+                if (validTile(b, col, row - 1) && currVal == b.tile(col, row-1).value()) {
+                    return true;
+                }
+                if (validTile(b, col, row + 1) && currVal == b.tile(col, row+1).value()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
+    /**
+     * Helper method for atLeastOneMoveExists()
+     * Checks if a tile exists
+     */
+    public static boolean validTile(Board b, int col, int row) {
+        int size = b.size();
+        if (col < 0 || col >= size || row < 0 || row >= size) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
      /** Returns the model as a string, used for debugging. */
