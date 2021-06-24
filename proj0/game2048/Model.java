@@ -107,9 +107,20 @@ public class Model extends Observable {
      *    and the trailing tile does not.
      * */
     public boolean tilt(Side side) {
-        boolean changed;
-        changed = false;
-
+//        if (side == Side.NORTH) {
+//            board.setViewingPerspective(Side.NORTH);
+//        } else if (side == Side.SOUTH) {
+//            board.setViewingPerspective(Side.SOUTH);
+//        } else if (side == Side.WEST) {
+//            board.setViewingPerspective(Side.WEST);
+//        } else {
+//            board.setViewingPerspective(Side.EAST);
+//        }
+        board.setViewingPerspective(side);
+        boolean changed = false;
+        for (int col = 0; col < board.size(); col += 1) {
+            changed = changed || tiltCol(col);
+        }
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
@@ -117,6 +128,35 @@ public class Model extends Observable {
         checkGameOver();
         if (changed) {
             setChanged();
+        }
+        board.setViewingPerspective(Side.NORTH);
+        return changed;
+    }
+
+    public boolean tiltCol(int col){
+        boolean changed = false;
+        boolean merged = false;
+        for (int row = board.size() - 2; row >= 0; row -= 1) {
+            //if it is not null
+            if (board.tile(col, row) != null) {
+                //assign the temp tile t;
+                Tile t = board.tile(col, row);
+                int tmpVal = t.value();
+                for (int r2 = board.size() - 1; r2 > row; r2 -= 1) {
+                    //if: never merged + not null tile + tile value equals
+                    if (!merged && (board.tile(col, r2) != null) && (tmpVal == board.tile(col,r2).value())) {
+                        board.move(col, r2, t);
+                        merged = true;  //we did the merge
+                        changed = true;
+                        score += tmpVal * 2; //更新分数
+                        break;
+                    } else if (board.tile(col, r2) == null) {
+                        board.move(col, r2, t);
+                        changed = true;
+                        break;
+                    }
+                }
+            }
         }
         return changed;
     }
