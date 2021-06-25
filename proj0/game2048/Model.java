@@ -134,21 +134,22 @@ public class Model extends Observable {
     }
 
     public boolean tiltCol(int col){
+        int size = board.size();
         boolean changed = false;
-        boolean merged = false;
-        for (int row = board.size() - 2; row >= 0; row -= 1) {
+        boolean []merged = new boolean[size]; //defaults to false
+        for (int row = size - 2; row >= 0; row -= 1) {
             //if it is not null
             if (board.tile(col, row) != null) {
                 //assign the temp tile t;
                 Tile t = board.tile(col, row);
                 int tmpVal = t.value();
-                for (int r2 = board.size() - 1; r2 > row; r2 -= 1) {
+                for (int r2 = size - 1; r2 > row; r2 -= 1) {
                     //if: never merged + not null tile + tile value equals
-                    if (!merged && (board.tile(col, r2) != null) && (tmpVal == board.tile(col,r2).value())) {
+                    if (!merged[r2] && (board.tile(col, r2) != null) && (tmpVal == board.tile(col,r2).value())) {
                         board.move(col, r2, t);
-                        merged = true;  //we did the merge
+                        merged[r2] = true;  //we did the merge
                         changed = true;
-                        score += tmpVal * 2; //更新分数
+                        score += tmpVal * 2;
                         break;
                     } else if (board.tile(col, r2) == null) {
                         board.move(col, r2, t);
